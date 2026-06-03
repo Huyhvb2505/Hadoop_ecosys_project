@@ -11,9 +11,18 @@
 
 HDFS - BASICS
 
-1. create & check the directory listing output
+1.1: create & check the directory listing output
 - cmd executed: 
 
-hdfs dfs -mkdir -p /user/student/{input,output,backup}  => create the directory /user/student/input | /user/student/output | /user/student/backup
+   hdfs dfs -mkdir -p /user/student/{input,output,backup}  => create the directory /user/student/input | /user/student/output | /user/student/backup
 
-hdfs dfs -ls  /user/student => print the directory list output 
+   hdfs dfs -ls  /user/student => print the directory list output 
+
+1.2:
+-  Upload files to HDFS
+   hdfs dfs -put /data/{employees.csv,sales.csv,customers.json} /user/student/input/ => upload all file from local file to hdfs
+
+- check all file details 
+   hdfs dfs -stat "%n %o %r %u %g %s %b %y" /user/student/input/*  
+
+1.3:
