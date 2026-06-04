@@ -175,7 +175,7 @@ SELECT
     AVG(revenue) as avg_revenue,
     LAG(SUM(revenue)) OVER (PARTITION BY region ORDER BY sale_year, sale_month) as prev_month_revenue,
     ((SUM(revenue) - LAG(SUM(revenue)) OVER (PARTITION BY region ORDER BY sale_year, sale_month)) / 
-     LAG(SUM(revenue)) OVER (PARTITION BY region ORDER BY sale_year, sale_month)) * 100 as revenue_growth_pct
+    LAG(SUM(revenue)) OVER (PARTITION BY region ORDER BY sale_year, sale_month)) * 100 as revenue_growth_pct
 FROM sales_fact
 GROUP BY sale_year, sale_month, region
 ORDER BY region, sale_year, sale_month;

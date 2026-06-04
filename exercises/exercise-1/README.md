@@ -90,11 +90,12 @@ hdfs dfs -ls -R /user/student/
 Explore the HDFS web interface and document your findings.
 
 **Steps:**
-1. Open http://localhost:9870 in your browser
-2. Navigate to "Utilities" → "Browse the file system"
+1. Open http://localhost:9870 in your browser   
+2. Navigate to "Utilities" → "Browse the file system"   
 3. Browse to your created directories
 4. View file details and blocks
 5. Check the "Datanodes" tab to see cluster information
+
 
 **Deliverable:** 
 - Screenshot of the web interface showing your directory structure
