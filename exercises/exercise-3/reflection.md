@@ -1,0 +1,1 @@
+# Learning outcomes and NoSQL vs SQL comparison (minimum 250 words)

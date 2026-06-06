@@ -151,3 +151,68 @@ ORDER BY total_revenue DESC;
 => Insights: Kết quả truy vấn cho thấy Laptop là sản phẩm tạo ra doanh thu cao nhất với tổng doanh thu đạt 3.600, tiếp theo là Phone với 2.400. Mặc dù Phone chỉ bán được 3 sản phẩm nhưng vẫn tạo ra doanh thu rất cao, cho thấy đây là mặt hàng có giá trị trên mỗi đơn vị bán lớn. Ngược lại, Mouse có số lượng bán cao nhất (5 sản phẩm) nhưng chỉ tạo ra 125 doanh thu, cho thấy đây là sản phẩm có giá trị thấp, phù hợp với chiến lược bán theo số lượng thay vì doanh thu.
 
 Xét theo khu vực, các sản phẩm thuộc North tạo ra tổng doanh thu khoảng 6.825, cao hơn đáng kể so với South với khoảng 2.375. Điều này cho thấy North hiện là thị trường đóng góp doanh thu chính của doanh nghiệp.
+
+5.
+
+
++----------+-------------+---------------+----------+-----------------+-------------+-------------------+-------------------------+----------------------+
+| sale_id  |  sale_date  | product_name  | revenue  |  employee_name  | department  | daily_sales_rank  | employee_total_revenue  | product_avg_revenue  |
++----------+-------------+---------------+----------+-----------------+-------------+-------------------+-------------------------+----------------------+
+| 2009     | 2024-01-23  | Camera        | 600.0    | Alice Williams  | Sales       | 1                 | 6825.0                  | 600.0                |
+| 2008     | 2024-01-22  | Headphones    | 600.0    | Frank Wilson    | Sales       | 1                 | 2375.0                  | 600.0                |
+| 2003     | 2024-01-17  | Keyboard      | 225.0    | Alice Williams  | Sales       | 1                 | 6825.0                  | 225.0                |
+| 2001     | 2024-01-15  | Laptop        | 2400.0   | Alice Williams  | Sales       | 1                 | 6825.0                  | 1800.0               |
+| 2005     | 2024-01-19  | Laptop        | 1200.0   | Alice Williams  | Sales       | 1                 | 6825.0                  | 1800.0               |
+| 2004     | 2024-01-18  | Monitor       | 350.0    | Frank Wilson    | Sales       | 1                 | 2375.0                  | 350.0                |
+| 2002     | 2024-01-16  | Mouse         | 125.0    | Frank Wilson    | Sales       | 1                 | 2375.0                  | 125.0                |
+| 2007     | 2024-01-21  | Phone         | 2400.0   | Alice Williams  | Sales       | 1                 | 6825.0                  | 2400.0               |
+| 2010     | 2024-01-24  | Printer       | 300.0    | Frank Wilson    | Sales       | 1                 | 2375.0                  | 300.0                |
+| 2006     | 2024-01-20  | Tablet        | 1000.0   | Frank Wilson    | Sales       | 1                 | 2375.0                  | 1000.0               |
++----------+-------------+---------------+----------+-----------------+-------------+-------------------+-------------------------+----------------------+
+
+
+=> Insights: 
+1. Hiệu suất nhân viên
+- Alice Williams tạo ra tổng doanh thu 6,825$, cao hơn Frank Wilson (2,375$).
+- Alice là nhân viên có hiệu suất bán hàng tốt nhất.
+
+2. Sản phẩm doanh thu cao
+- Laptop và Phone có doanh thu cao nhất với 2,400$.
+- Đây là hai sản phẩm đóng góp doanh thu lớn nhất.
+
+3. Xếp hạng doanh thu theo ngày
+- Tất cả các giao dịch trong kết quả đều có daily_sales_rank = 1.
+- Điều này cho thấy mỗi giao dịch là giao dịch doanh thu cao nhất trong ngày tương ứng.
+
+4. Doanh thu trung bình sản phẩm
+- Laptop có doanh thu trung bình 1,800$.
+- Giao dịch Laptop ngày 2024-01-15 đạt 2,400$, cao hơn mức trung bình.
+- Giao dịch Laptop ngày 2024-01-19 đạt 1,200$, thấp hơn mức trung bình.
+
+6. 
+
+CREATE TABLE sales_partitioned (
+    sale_id INT,
+    employee_id INT,
+    customer_id INT,
+    product_name STRING,
+    quantity INT,
+    unit_price DOUBLE,
+    revenue DOUBLE,
+    sale_date DATE
+)
+PARTITIONED BY (region STRING, sale_year INT)
+STORED AS PARQUET;
+
+SET hive.exec.dynamic.partition = true;
+SET hive.exec.dynamic.partition.mode = nonstrict;
+
+=> Partition giúp chia data theo nhóm và khi cần tìm theo nhóm nào đó sẽ lấy data ra nhanh khi cần. Nó giống như
+1 đống hồ sơ gồm nhiều loại tài liệu và khi ta cần tài liệu theo region = North thì cần phải scan qua từng tờ
+thì mới lấy ra được region = North. Vì thế Hive giúp partition data theo column yêu cầu.
+"SET hive.exec.dynamic.partition = true;
+SET hive.exec.dynamic.partition.mode = nonstrict;" => 2 dòng này có mục đích lần lượt là mỗi khi cần insert data
+thì ta cần phải chỉ rõ cần partition column nào vì thế khá mệt. Dòng đầu giúp partition tạo tự động và dòng sau 
+giúp ko cần phải set giá trị cố định mà Hive sẽ tự xem data xem value đó đã có partition chưa nếu chưa nó sẽ tự 
+partition
+
